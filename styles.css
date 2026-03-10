@@ -324,6 +324,22 @@ select:focus {
     min-width: 120px;
 }
 
+/* İlk sütunu (Tarih) sabitleme */
+.data-table th:first-child,
+.data-table td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 5;
+    background-color: var(--surface-color);
+    border-right: 2px solid var(--border-color);
+    min-width: 80px;
+}
+
+.data-table th:first-child {
+    z-index: 10; /* Başlık hücresi hem üstte hem solda sabit kalmalı */
+    background-color: #1c2128; /* Kaydırma anında karışmaması için biraz daha koyu */
+}
+
 .data-table th {
     background-color: rgba(255, 255, 255, 0.02);
     font-weight: 600;
