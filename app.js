@@ -34,11 +34,12 @@ function saveState() {
 const moneyFormatter = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' });
 const dateFormatter = new Intl.DateTimeFormat('tr-TR', { day: '2-digit', month: 'long', year: 'numeric' });
 
-// Girilen tarihe uyan aktif fiyatı getirme
+// Girilen tarihe uyan aktif fiyatı getirme (En yakın geçmişteki fiyat)
 function getPriceForDate(category, dateStr) {
+    // dateStr: "YYYY-MM-DD" formatında gelir
     const applicablePrices = state.prices
         .filter(p => p.category === category && p.effectiveDate <= dateStr)
-        .sort((a, b) => new Date(b.effectiveDate) - new Date(a.effectiveDate));
+        .sort((a, b) => b.effectiveDate.localeCompare(a.effectiveDate));
 
     return applicablePrices.length > 0 ? parseFloat(applicablePrices[0].price) : 0;
 }
