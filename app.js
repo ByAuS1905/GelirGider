@@ -6,7 +6,7 @@ const CATEGORIES = ['Otomobil', 'Minibüs', 'Midibüs', 'Otobüs', 'Motosiklet',
 const defaultPrices = CATEGORIES.map(cat => ({
     category: cat,
     price: 0,
-    effectiveDate: '2020-01-01'
+    effectiveDate: '1900-01-01'
 }));
 
 let state = {
@@ -14,6 +14,14 @@ let state = {
     monthlyData: JSON.parse(localStorage.getItem('gg_monthly')) || {},
     guestData: JSON.parse(localStorage.getItem('gg_guest')) || {}
 };
+
+// Eski 2020 tarihli defaultları 1900'e çekme (Migration)
+state.prices = state.prices.map(p => {
+    if (p.effectiveDate === '2020-01-01' && p.price === 0) {
+        return { ...p, effectiveDate: '1900-01-01' };
+    }
+    return p;
+});
 
 // Veriyi kaydetme
 function saveState() {
@@ -58,14 +66,21 @@ document.getElementById('price-date').value = new Date().toISOString().split('T'
 document.getElementById('price-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const category = document.getElementById('price-category').value;
-    const price = document.getElementById('new-price').value;
+    const price = parseFloat(document.getElementById('new-price').value);
     const date = document.getElementById('price-date').value;
 
-    state.prices.push({
-        category,
-        price: parseFloat(price),
-        effectiveDate: date
-    });
+    // Eğer aynı kategori ve tarih için zaten bir kayıt varsa onu güncelle, yoksa yeni ekle
+    const existingIndex = state.prices.findIndex(p => p.category === category && p.effectiveDate === date);
+    
+    if (existingIndex > -1) {
+        state.prices[existingIndex].price = price;
+    } else {
+        state.prices.push({
+            category,
+            price: price,
+            effectiveDate: date
+        });
+    }
 
     saveState();
     renderSettings();

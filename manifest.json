@@ -1,0 +1,15 @@
+{
+  "name": "Gelir Gider Takip",
+  "short_name": "G&G Takip",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#238636",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2454/2454282.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
