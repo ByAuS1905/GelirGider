@@ -450,11 +450,29 @@ document.getElementById('btn-filter').addEventListener('click', () => {
     updateDashboard(start, end);
 });
 
+document.getElementById('btn-this-month').addEventListener('click', () => {
+    setMonthFilter();
+});
+
 document.getElementById('btn-reset-filter').addEventListener('click', () => {
     document.getElementById('filter-start').value = '';
     document.getElementById('filter-end').value = '';
     updateDashboard();
 });
+
+// Güncel ayı filtreleme fonksiyonu
+function setMonthFilter() {
+    const now = new Date();
+    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+    const startStr = firstDay.toISOString().split('T')[0];
+    const endStr = lastDay.toISOString().split('T')[0];
+
+    document.getElementById('filter-start').value = startStr;
+    document.getElementById('filter-end').value = endStr;
+    updateDashboard(startStr, endStr);
+}
 
 // --- Yedekleme (Backup / Restore) İşlemleri ---
 document.getElementById('btn-export').addEventListener('click', () => {
@@ -509,7 +527,7 @@ document.getElementById('file-import').addEventListener('change', (e) => {
 });
 
 // Başlatma ve Event Listenerlar ilk setup
-updateDashboard();
+setMonthFilter(); // Sayfa açıldığında güncel ayı filtrele
 renderSettings();
 if (document.getElementById('monthly').classList.contains('active')) {
     renderMonthlyTable();
