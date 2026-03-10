@@ -237,9 +237,20 @@
     </div>
     <script src="app.js"></script>
     <script>
+        let newWorker;
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js')
-                .then(reg => console.log('SW Registered'))
+                .then(reg => {
+                    reg.addEventListener('updatefound', () => {
+                        newWorker = reg.installing;
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                // Yeni versiyon yüklendi! Sayfayı yenileyerek aktif edelim.
+                                window.location.reload();
+                            }
+                        });
+                    });
+                })
                 .catch(err => console.log('SW Error', err));
         }
     </script>
