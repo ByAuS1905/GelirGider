@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gelir & Gider Yönetimi</title>
+    <!-- Modern Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Bottom Nav (Depending on screen size) -->
+        <nav class="navigation">
+            <h1 class="logo">G&G Takip</h1>
+            <ul class="nav-links">
+                <li class="active" data-target="dashboard">Özet Tablo</li>
+                <li data-target="monthly">Aylık Çizelge</li>
+                <li data-target="settings">Fiyat Ayarları</li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="content-area">
+
+            <!-- Dashboard View -->
+            <section id="dashboard" class="view active">
+                <header class="section-header">
+                    <h2>Genel Özet</h2>
+                    <p class="subtitle" id="dashboard-date">Tarih aralığı seçerek özet tabloyu filtreleyin</p>
+                    <div class="form-container"
+                        style="margin-top:1.5rem; margin-bottom: 2rem; max-width: 100%; display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end; padding: 1rem;">
+                        <div style="flex: 1; min-width: 150px;">
+                            <label
+                                style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.3rem; display:block">Başlangıç
+                                Tarihi</label>
+                            <input type="date" id="filter-start" style="padding: 0.6rem; font-size: 0.95rem;">
+                        </div>
+                        <div style="flex: 1; min-width: 150px;">
+                            <label
+                                style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.3rem; display:block">Bitiş
+                                Tarihi</label>
+                            <input type="date" id="filter-end" style="padding: 0.6rem; font-size: 0.95rem;">
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; flex: 1; min-width: 200px;">
+                            <button id="btn-filter" class="btn-primary"
+                                style="margin-top: 0; padding: 0.6rem 1rem;">Filtrele</button>
+                            <button id="btn-reset-filter" class="btn-primary"
+                                style="margin-top: 0; padding: 0.6rem 1rem; background-color: var(--surface-color); border: 1px solid var(--border-color); color: var(--text-primary);">Tümü</button>
+                        </div>
+                    </div>
+                </header>
+                <div class="summary-cards">
+                    <div class="card income">
+                        <h3>Geçiş Geliri (Toplam)</h3>
+                        <p class="amount" id="sum-income">0 ₺</p>
+                    </div>
+                    <div class="card expense">
+                        <h3>Büfe Geliri (Net Hasılat)</h3>
+                        <p class="amount" id="sum-bufe-net">0 ₺</p>
+                    </div>
+                    <div class="card net"
+                        style="background: rgba(35, 134, 54, 0.1); border-color: var(--accent-color);">
+                        <h3 style="color: var(--accent-color);">Genel Toplam (Net)</h3>
+                        <p class="amount" id="sum-net" style="color: var(--text-primary);">0 ₺</p>
+                    </div>
+
+                    <div class="card"
+                        style="border-color: #58a6ff; background-color: rgba(88, 166, 255, 0.05); text-align: right;">
+                        <h3 style="color: #58a6ff;">💡 Potansiyel Kayıp Gelir</h3>
+                        <p class="subtitle" style="margin-bottom: 0.5rem; font-size: 0.8rem;">(Misafirler ücretli
+                            geçseydi kazanılacak tutar)</p>
+                        <p class="amount" id="sum-guest-loss" style="color: #58a6ff; font-size: 1.8rem;">0 ₺</p>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 2.5rem; margin-bottom: 1rem; color: var(--text-primary);">Araç Geçiş
+                    İstatistikleri (Misafirler Dahil)</h3>
+                <div class="summary-cards" id="vehicle-stats-container"
+                    style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">
+                    <!-- JS ile doldurulacak -->
+                </div>
+            </section>
+
+            <!-- Monthly View -->
+            <section id="monthly" class="view">
+                <header class="section-header">
+                    <h2>Araç Geçiş Çizelgesi</h2>
+                    <div class="month-selector">
+                        <button id="prev-month">&lt;</button>
+                        <span id="current-month-display">Ekim 2026</span>
+                        <button id="next-month">&gt;</button>
+                    </div>
+                </header>
+                <div class="table-container">
+                    <p class="info-note">⚠️ Özel Kural: Tabloya sadece bulunduğunuz ayın <b>Pazar günleri</b>
+                        yansımaktadır. Kayıtlar sadece Pazar günü yapılabilecek şekilde sınırlandırılmıştır.</p>
+                    <table class="data-table" id="monthly-table">
+                        <thead>
+                            <tr>
+                                <th>Tarih (Pazar)</th>
+                                <th>Otomobil</th>
+                                <th>Minibüs</th>
+                                <th>Midibüs</th>
+                                <th>Otobüs</th>
+                                <th>Motosiklet</th>
+                                <th>Yaya</th>
+                                <th>Büfe Hasılat (₺)</th>
+                                <th>Büfe Gideri (₺)</th>
+                                <th>Gün Toplamı (₺)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="monthly-tbody">
+                            <!-- Rows generated by JS -->
+                        </tbody>
+                        <tfoot id="monthly-tfoot">
+                            <!-- Footer for totals generated by JS -->
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div style="margin-top: 3rem;">
+                    <header class="section-header">
+                        <h2>Misafir Araç Çizelgesi</h2>
+                        <p class="subtitle">Bu araçlar gelire (genel toplama) etki etmez, sadece sayıları takip edilir.
+                        </p>
+                    </header>
+                    <div class="table-container"
+                        style="border: 1px solid #58a6ff; box-shadow: 0 4px 6px rgba(88, 166, 255, 0.1);">
+                        <table class="data-table" id="guest-table">
+                            <thead>
+                                <tr>
+                                    <th>Tarih (Pazar)</th>
+                                    <th>Otomobil</th>
+                                    <th>Minibüs</th>
+                                    <th>Midibüs</th>
+                                    <th>Otobüs</th>
+                                    <th>Motosiklet</th>
+                                    <th>Yaya</th>
+                                </tr>
+                            </thead>
+                            <tbody id="guest-tbody">
+                                <!-- Rows generated by JS -->
+                            </tbody>
+                            <tfoot id="guest-tfoot">
+                                <!-- Footer for totals generated by JS -->
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+
+
+
+            <!-- Settings View -->
+            <section id="settings" class="view">
+                <header class="section-header">
+                    <h2>Fiyat ve Kategori Ayarları</h2>
+                    <p class="subtitle">Seçtiğiniz tarihten itibaren geçerli olacak yeni fiyatları tanımlayın. Geçmiş
+                        veriler, kaydedildikleri tarihteki fiyattan hesaplanmaya devam eder.</p>
+                </header>
+                <div class="form-container">
+                    <form id="price-form">
+                        <div class="form-group">
+                            <label>Araç Kategorisi</label>
+                            <select id="price-category">
+                                <option value="Otomobil">Otomobil</option>
+                                <option value="Minibüs">Minibüs</option>
+                                <option value="Midibüs">Midibüs</option>
+                                <option value="Otobüs">Otobüs</option>
+                                <option value="Motosiklet">Motosiklet</option>
+                                <option value="Yaya">Yaya</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Yeni Geçiş Fiyatı (₺)</label>
+                            <input type="number" id="new-price" step="0.01" min="0" required placeholder="25.00">
+                        </div>
+                        <div class="form-group">
+                            <label>Hangi Tarihten İtibaren Geçerli?</label>
+                            <input type="date" id="price-date" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Sisteme İşle</button>
+                    </form>
+                </div>
+                <div class="records-list">
+                    <h3>Bugün İtibariyle Aktif Fiyat Listesi</h3>
+                    <ul id="current-prices-list">
+                        <!-- Elements generated by JS -->
+                    </ul>
+                </div>
+
+                <div style="margin-top: 3rem;">
+                    <header class="section-header">
+                        <h2>Veri Yedekleme ve Geri Yükleme</h2>
+                        <p class="subtitle">Tüm kayıtlarınızı bilgisayarınıza indirebilir (Yedek Al) veya daha önce
+                            aldığınız bir yedeği sisteme yükleyebilirsiniz.</p>
+                    </header>
+                    <div class="form-container" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 200px;">
+                            <h3 style="margin-bottom: 0.5rem; font-size: 1rem; color: var(--text-primary);">Dışa Aktar
+                            </h3>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">Mevcut tüm
+                                verilerinizi bir dosya olarak indirin.</p>
+                            <button id="btn-export" class="btn-primary"
+                                style="background-color: var(--surface-color); border: 1px solid var(--border-color); color: var(--text-primary);">📥
+                                Yedek İndir</button>
+                        </div>
+                        <div style="flex: 1; min-width: 200px;">
+                            <h3 style="margin-bottom: 0.5rem; font-size: 1rem; color: var(--text-primary);">İçe Aktar
+                            </h3>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">Aldığınız
+                                ".json" uzantılı yedek dosyasını seçin.</p>
+                            <input type="file" id="file-import" accept=".json" style="padding: 0.5rem; display: none;">
+                            <button id="btn-import-trigger" class="btn-primary"
+                                style="background-color: var(--danger-color);">📤 Yedek Yükle</button>
+                            <small style="color: var(--danger-color); display: block; margin-top: 0.5rem;">DİKKAT:
+                                Mevcut veriler silinip yüklediğiniz dosya geçerli olur.</small>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+
+</html>
