@@ -84,7 +84,8 @@ document.getElementById('price-form').addEventListener('submit', (e) => {
 
     saveState();
     renderSettings();
-    updateDashboard(); // Geçmiş Fiyatları etkilerse
+    updateDashboard();
+    renderMonthlyTable(); // Eski kayıtların yeni fiyatla tekrar hesaplanması için
 
     // reset ama tarihi koru
     document.getElementById('new-price').value = '';
