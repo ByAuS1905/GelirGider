@@ -463,11 +463,22 @@ document.getElementById('btn-reset-filter').addEventListener('click', () => {
 // Güncel ayı filtreleme fonksiyonu
 function setMonthFilter() {
     const now = new Date();
+    
+    // Ayın ilk günü (Yerel)
     const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+    // Ayın son günü (Yerel)
     const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
-    const startStr = firstDay.toISOString().split('T')[0];
-    const endStr = lastDay.toISOString().split('T')[0];
+    // Yerel YYYY-MM-DD formatlayıcı
+    const formatLocal = (d) => {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+    };
+
+    const startStr = formatLocal(firstDay);
+    const endStr = formatLocal(lastDay);
 
     document.getElementById('filter-start').value = startStr;
     document.getElementById('filter-end').value = endStr;
